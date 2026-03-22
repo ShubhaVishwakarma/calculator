@@ -10,10 +10,6 @@ A simple calculator application built using Flutter.
 * Division
 * Clean and simple UI
 
-## Screenshots
-
-(Add your app screenshot here)
-
 ## Technologies Used
 
 * Flutter
