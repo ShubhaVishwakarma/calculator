@@ -1,32 +1,38 @@
 # Flutter Calculator App
 
-A simple calculator application built using Flutter.
+A simple and beautiful calculator app built using **Flutter**.
 
 ## Features
 
-* Addition
-* Subtraction
-* Multiplication
-* Division
-* Clean and simple UI
+* Basic arithmetic operations (+, -, ×, ÷)
+* Clean UI
+* Fast calculations
+* Built with Flutter framework
 
-## Technologies Used
+## Screenshots
+
+(Add your app screenshot here)
+
+## Download APK
+
+Click below to download and install the app:
+
+[Download APK](app-release.apk)
+
+## Built With
 
 * Flutter
 * Dart
 
 ## Getting Started
 
-1. Clone the repository
+### Clone the repository
 
 git clone https://github.com/ShubhaVishwakarma/calculator.git
 
-2. Open the project
+### Run the project
 
-cd calculator
-
-3. Run the app
-
+flutter pub get
 flutter run
 
 ## Author
