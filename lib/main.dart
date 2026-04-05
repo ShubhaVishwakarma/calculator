@@ -1,18 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:math_expressions/math_expressions.dart';
 
 void main() {
-
-  WidgetsFlutterBinding.ensureInitialized();
-
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      systemNavigationBarColor: Color(0xff0f0f1a),
-      systemNavigationBarIconBrightness: Brightness.light,
-    ),
-  );
-
   runApp(const MyApp());
 }
 
@@ -36,9 +25,18 @@ class Calculator extends StatefulWidget {
 }
 
 class _CalculatorState extends State<Calculator> {
-
   String input = "";
   String output = "0";
+
+  bool openBracket = true;
+
+  final List<String> buttons = [
+    "C","()","%","⌫",
+    "7","8","9","/",
+    "4","5","6","*",
+    "1","2","3","-",
+    "0",".","+","="
+  ];
 
   void buttonPressed(String value) {
 
@@ -55,35 +53,36 @@ class _CalculatorState extends State<Calculator> {
         }
       }
 
+      else if (value == "()") {
+        if (openBracket) {
+          input += "(";
+        } else {
+          input += ")";
+        }
+        openBracket = !openBracket;
+      }
+
+      else if (value == "%") {
+        input += "%";
+      }
+
       else if (value == "=") {
         if (input.isEmpty) return;
         output = calculate(input);
       }
 
       else {
-
-        if ("+-*/".contains(value)) {
-
-          if (input.isEmpty) return;
-
-          String last = input[input.length - 1];
-
-          if ("+-*/".contains(last)) return;
-        }
-
         input += value;
       }
 
     });
-
   }
 
   String calculate(String expression) {
 
     try {
 
-      expression = expression.replaceAll('×', '*');
-      expression = expression.replaceAll('÷', '/');
+      expression = expression.replaceAll('%', '/100');
 
       Parser p = Parser();
       Expression exp = p.parse(expression);
@@ -103,47 +102,13 @@ class _CalculatorState extends State<Calculator> {
     }
   }
 
-  Widget buildButton(String text, Color color) {
+  Color getButtonColor(String text) {
 
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(18),
-          onTap: () => buttonPressed(text),
-          child: Container(
-            height: 70,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
-              gradient: LinearGradient(
-                colors: [
-                  color.withOpacity(0.9),
-                  color
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.4),
-                  blurRadius: 6,
-                  offset: const Offset(3,3),
-                )
-              ],
-            ),
-            child: Center(
-              child: Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 26,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    if (text == "C") return Colors.red;
+    if (text == "=") return Colors.green;
+    if ("+-*/".contains(text)) return Colors.deepPurple;
 
+    return Colors.grey.shade800;
   }
 
   @override
@@ -151,145 +116,104 @@ class _CalculatorState extends State<Calculator> {
 
     return Scaffold(
 
+      backgroundColor: const Color(0xff0f0f1a),
+
       appBar: AppBar(
-        title: const Text(
-          "Calculator",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: const Text("Calculator"),
         centerTitle: true,
-        backgroundColor: const Color(0xff6a3cbc),
-        elevation: 0,
+        backgroundColor: Colors.deepPurple,
       ),
 
-      body: Container(
+      body: Column(
 
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color(0xff1e1e2f),
-              Color(0xff0f0f1a),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
+        children: [
 
-        child: SafeArea(
+          /// DISPLAY
+          Expanded(
+            flex: 2,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(20),
+              alignment: Alignment.bottomRight,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
 
-          child: Column(
-
-            children: [
-
-              const SizedBox(height: 15),
-
-              /// INPUT DISPLAY
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(16),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  color: Colors.white.withOpacity(0.06),
-                ),
-                child: Text(
-                  input.isEmpty ? "0" : input,
-                  textAlign: TextAlign.right,
-                  style: const TextStyle(
-                    fontSize: 26,
-                    color: Colors.white70,
+                  Text(
+                    input,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      color: Colors.white70,
+                    ),
                   ),
-                ),
+
+                  const SizedBox(height: 10),
+
+                  Text(
+                    output,
+                    style: const TextStyle(
+                      fontSize: 48,
+                      color: Colors.greenAccent,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+
+                ],
               ),
-
-              const SizedBox(height: 10),
-
-              /// RESULT DISPLAY
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.all(20),
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                  color: Colors.white.withOpacity(0.10),
-                ),
-                child: Text(
-                  output,
-                  textAlign: TextAlign.right,
-                  style: const TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.greenAccent,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              /// BUTTON AREA
-              Expanded(
-
-                child: Column(
-
-                  children: [
-
-                    Row(
-                      children: [
-                        buildButton("C", Colors.redAccent),
-                        buildButton("⌫", Colors.orange),
-                        buildButton("/", Colors.deepPurple),
-                        buildButton("*", Colors.deepPurple),
-                      ],
-                    ),
-
-                    Row(
-                      children: [
-                        buildButton("7", Colors.grey.shade800),
-                        buildButton("8", Colors.grey.shade800),
-                        buildButton("9", Colors.grey.shade800),
-                        buildButton("-", Colors.deepPurple),
-                      ],
-                    ),
-
-                    Row(
-                      children: [
-                        buildButton("4", Colors.grey.shade800),
-                        buildButton("5", Colors.grey.shade800),
-                        buildButton("6", Colors.grey.shade800),
-                        buildButton("+", Colors.deepPurple),
-                      ],
-                    ),
-
-                    Row(
-                      children: [
-                        buildButton("1", Colors.grey.shade800),
-                        buildButton("2", Colors.grey.shade800),
-                        buildButton("3", Colors.grey.shade800),
-                        buildButton("=", Colors.green),
-                      ],
-                    ),
-
-                    Row(
-                      children: [
-                        buildButton("0", Colors.grey.shade800),
-                        buildButton(".", Colors.grey.shade800),
-                      ],
-                    ),
-
-                  ],
-                ),
-
-              ),
-
-            ],
-
+            ),
           ),
 
-        ),
+          /// BUTTON GRID
+          Expanded(
+            flex: 5,
+            child: GridView.builder(
 
+              padding: const EdgeInsets.all(10),
+
+              gridDelegate:
+              const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+
+              itemCount: buttons.length,
+
+              itemBuilder: (context, index) {
+
+                String text = buttons[index];
+
+                return GestureDetector(
+
+                  onTap: () => buttonPressed(text),
+
+                  child: Container(
+
+                    decoration: BoxDecoration(
+                      color: getButtonColor(text),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+
+                    child: Center(
+                      child: Text(
+                        text,
+                        style: const TextStyle(
+                          fontSize: 28,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                  ),
+
+                );
+              },
+            ),
+          ),
+        ],
       ),
-
     );
-
   }
-
 }
