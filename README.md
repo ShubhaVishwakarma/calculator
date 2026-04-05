@@ -9,11 +9,7 @@ A simple and beautiful calculator app built using **Flutter**.
 * Fast calculations
 * Built with Flutter framework
 
-## 📥 Download App
 
-Download the latest APK from the release page:
-
-👉 https://github.com/ShubhaVishwakarma/calculator/releases
 
 ## 🛠 Built With
 
