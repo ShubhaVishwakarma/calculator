@@ -9,9 +9,6 @@ A simple and beautiful calculator app built using **Flutter**.
 * Fast calculations
 * Built with Flutter framework
 
-## Screenshots
-
-(Add your app screenshot here)
 
 ## Download APK
 
